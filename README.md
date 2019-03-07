@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/anselb/agile-helper)](https://goreportcard.com/report/github.com/anselb/agile-helper)
+
 # Agile Helper
 
 A Go tool to help you do agile development
