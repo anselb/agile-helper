@@ -50,5 +50,7 @@ Temporary Items
 # dotenv environment variables file
 .env
 .env.test
+credentials.json
+token.json
 
 # End of https://www.gitignore.io/api/go,macos
