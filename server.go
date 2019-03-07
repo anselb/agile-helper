@@ -7,7 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/joho/godotenv"
 )
 
@@ -26,9 +29,27 @@ type ListCards struct {
 	IDMembers []string `json:"idMembers"`
 }
 
+// Sprint is a struct that holdes the data from one sprint
+type Sprint struct {
+	gorm.Model
+	Project         string
+	SprintNum       int
+	PlannedPoints   int
+	CompletedPoints int
+}
+
 func main() {
+	// Setup DB
+	db, err := gorm.Open("sqlite3", "sprint.db")
+	if err != nil {
+		log.Fatal("Failed to connect to database")
+	}
+	defer db.Close()
+
+	db.AutoMigrate(&Sprint{})
+
 	// Load env
-	err := godotenv.Load()
+	err = godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -36,7 +57,7 @@ func main() {
 	trelloToken := os.Getenv("TRELLO_TOKEN")
 
 	boardID := "ilKTjffb"
-	listName := "To Do Now"
+	listName := "Test List"
 
 	// Calling Trello API for lists inside of board
 	boardLists := fmt.Sprintf("https://api.trello.com/1/boards/%s/lists?cards=none&card_fields=all&filter=open&fields=all&key=%s&token=%s", boardID, trelloKey, trelloToken)
@@ -97,4 +118,16 @@ func main() {
 	// Print data
 	fmt.Println(cards)
 
+	// Calculate total points and save it the database
+	var plannedPoints int
+	for _, card := range cards {
+		cardPointsStr := string(card.Name[0])
+		cardPoints, err := strconv.Atoi(cardPointsStr)
+		if err != nil {
+			log.Fatal(err)
+		}
+		plannedPoints += cardPoints
+	}
+	currentSprint := Sprint{Project: "Test", SprintNum: 1, PlannedPoints: plannedPoints, CompletedPoints: 0}
+	db.Create(&currentSprint)
 }
