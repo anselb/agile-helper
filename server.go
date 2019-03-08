@@ -23,10 +23,11 @@ type BoardLists struct {
 
 // ListCards is a struct that holds a single card object from a given list
 type ListCards struct {
-	ID        string   `json:"id"`
-	IDBoard   string   `json:"idBoard"`
-	Name      string   `json:"name"`
-	IDMembers []string `json:"idMembers"`
+	ID          string   `json:"id"`
+	Descriptipn string   `json:"desc"`
+	IDBoard     string   `json:"idBoard"`
+	Name        string   `json:"name"`
+	IDMembers   []string `json:"idMembers"`
 }
 
 // Sprint is a struct that holdes the data from one sprint
@@ -57,7 +58,7 @@ func main() {
 	trelloToken := os.Getenv("TRELLO_TOKEN")
 
 	boardID := "ilKTjffb"
-	listName := "Test List"
+	listName := "Current Sprint"
 
 	// Calling Trello API for lists inside of board
 	boardLists := fmt.Sprintf("https://api.trello.com/1/boards/%s/lists?cards=none&card_fields=all&filter=open&fields=all&key=%s&token=%s", boardID, trelloKey, trelloToken)
